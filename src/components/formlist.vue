@@ -45,9 +45,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../camundaFormIOTasklist.scss'
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Component, Vue } from 'vue-property-decorator'
 import { BootstrapVue } from 'bootstrap-vue'
 import CamundaRest from '../services/camunda-rest'
-import { Component, Vue } from 'vue-property-decorator'
 import { Form } from 'vue-formio';
 
 Vue.use(BootstrapVue)
@@ -72,7 +72,7 @@ export default class FormList extends Vue{
     return this.formList.length;
   }
 
-  created() {
+  mounted() {
     const token = localStorage.getItem('authToken')
     const bpmUrl = localStorage.getItem('bpmApiUrl')
     this.formioUrl = localStorage.getItem('formioApiUrl')
@@ -80,6 +80,6 @@ export default class FormList extends Vue{
     {
       this.formList = response.data;
     });
-    }
   }
+}
 </script>

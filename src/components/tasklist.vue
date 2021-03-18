@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 <template>
   <b-container fluid class="task-outer-container">
   <b-row class="cft-service-task-list">
@@ -78,7 +79,7 @@
           </div>
           </b-list-group-item>
         </b-list-group>
-        <b-pagination-nav :link-gen="linkGen" :number-of-pages="numPages" v-model="currentPage" />
+        <b-pagination-nav class="cft-task-pagination" :link-gen="linkGen" :number-of-pages="numPages" v-model="currentPage" />
       </b-col>
     <b-col cols="4" v-else> 
       <b-row class="cft-not-selected mt-2 ml-1 row">
@@ -200,16 +201,16 @@ import 'formiojs/dist/formio.full.min.css'
 import '../camundaFormIOTasklist.scss'
 import 'vue2-datepicker/index.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import  BootstrapVue from 'bootstrap-vue'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import {TASK_FILTER_LIST_DEFAULT_PARAM, decodeTokenValues, findFilterKeyOfAllTask, getTaskFromList, sortingList} from "../services/utils";
+import  BootstrapVue from 'bootstrap-vue'
 import CamundaRest from '../services/camunda-rest';
 import DatePicker from 'vue2-datepicker'
 import { Form } from 'vue-formio';
+import TaskSortOptions from '../components/tasklist-sortoptions.vue';
 import {authenticateFormio} from "../services/formio-token";
 import {getFormDetails} from "../services/get-formio";
 import moment from "moment";
-import {TASK_FILTER_LIST_DEFAULT_PARAM, decodeTokenValues, findFilterKeyOfAllTask, getTaskFromList, sortingList} from "../services/utils";
-import TaskSortOptions from '../components/tasklist-sortoptions.vue';
 
 Vue.use(BootstrapVue)
 
@@ -279,31 +280,31 @@ private payload: any = {"processVariables":[],"taskVariables":[],"caseInstanceVa
 }
 
 checkPropsIsPassedAndSetValue() {
-  if(! this.bpmApiUrl|| this.bpmApiUrl===""){
+  if(!this.bpmApiUrl|| this.bpmApiUrl===""){
     console.error("bpmApiUrl prop not Passed")
   }
 
-  else if(! this.token || this.token==="") {
+  else if(!this.token || this.token==="") {
     console.error("token prop not Passed")
   }
 
-  else if(! this.formIOResourceId|| this.formIOResourceId==="") {
+  else if(!this.formIOResourceId|| this.formIOResourceId==="") {
     console.error("formIOResourceId prop not passed")
   }
 
-  else if(! this.formIOReviewerId|| this.formIOReviewerId==="") {
+  else if(!this.formIOReviewerId|| this.formIOReviewerId==="") {
     console.error("formIOReviewerId prop not passed")
   }
 
-  else if(! this.formIOApiUrl|| this.formIOApiUrl==="") {
+  else if(!this.formIOApiUrl|| this.formIOApiUrl==="") {
     console.error("formIOApiUrl prop not passed")
   }
 
-  else if(! this.formsflowaiApiUrl || this.formsflowaiApiUrl==="") {
+  else if(!this.formsflowaiApiUrl || this.formsflowaiApiUrl==="") {
     console.error("formsflow.ai API url prop not passed")
   }
 
-  else if(! this.formsflowaiUrl || this.formsflowaiUrl==="") {
+  else if(!this.formsflowaiUrl || this.formsflowaiUrl==="") {
     console.error("formsflow.ai URL prop not passed")
   }
 
@@ -340,7 +341,7 @@ togglefilter(index: number) {
 }
 
 addGroup() {
-  CamundaRest.createTaskGroupByID(this.token, this.task.id, this.bpmApiUrl, {"userId": null, "groupId": this.setGroup, "type": "candidate"}).then((result) => {
+  CamundaRest.createTaskGroupByID(this.token, this.task.id, this.bpmApiUrl, {"userId": null, "groupId": this.setGroup, "type": "candidate"}).then(() => {
     this.getGroupDetails();
     this.reloadCurrentTask()
   })
