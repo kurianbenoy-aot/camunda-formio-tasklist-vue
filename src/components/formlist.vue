@@ -12,14 +12,18 @@
       :per-page="perPage">
         <b-thead>
           <b-tr>
-            <b-th>Form Name</b-th>
+            <b-th>Form</b-th>
             <b-th>Operations</b-th>
           </b-tr>
         </b-thead>
         <b-tbody>
           <b-tr v-for="form in formList" :key="form.formId">
             <b-th> {{form.formName}}</b-th>
-            <b-th><b-button variant="primary">Submit New</b-button> </b-th>
+            <b-th><b-button variant="primary"><i class="bi bi-pencil"></i> Submit New</b-button> </b-th>
+            {{form.formId}}
+            <Form src="https://forms2.aot-technologies.com/form/605292632f1358ca46309b2d"
+            >
+            </Form>
           </b-tr>
         </b-tbody>
       </b-table-simple>
@@ -37,18 +41,22 @@
 </template>
 
 <script lang="ts">
-import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
-import CamundaRest from '../services/camunda-rest'
-import { Component, Vue } from 'vue-property-decorator'
-
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '../camundaFormIOTasklist.scss'
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { BootstrapVue } from 'bootstrap-vue'
+import CamundaRest from '../services/camunda-rest'
+import { Component, Vue } from 'vue-property-decorator'
+import { Form } from 'vue-formio';
 
 Vue.use(BootstrapVue)
-Vue.use(IconsPlugin)
 
-@Component
+@Component({
+  components: {
+    Form,
+  }
+})
 export default class FormList extends Vue{
   private formList: Array<object> = []
   private actualFormNames = []
@@ -58,6 +66,7 @@ export default class FormList extends Vue{
   ]
   private perPage = 10
   private currentPage = 1
+  private formioUrl: any = ''
 
   get totalrows() {
     return this.formList.length;
@@ -66,6 +75,7 @@ export default class FormList extends Vue{
   created() {
     const token = localStorage.getItem('authToken')
     const bpmUrl = localStorage.getItem('bpmApiUrl')
+    this.formioUrl = localStorage.getItem('formioApiUrl')
     CamundaRest.listForms(token, bpmUrl).then((response) =>
     {
       this.formList = response.data;
