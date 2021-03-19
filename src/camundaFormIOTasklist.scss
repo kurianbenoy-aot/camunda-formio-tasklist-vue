@@ -140,10 +140,10 @@
     margin-top: 15px;
 
   }
-  .cft-filter-sort{
-    display: flex;
-    justify-content: space-between;
-  }
+  // .cft-filter-sort{
+  //   display: flex;
+  //   justify-content: space-between;
+  // }
   .tabs {
     display: block;
   }
@@ -154,6 +154,28 @@
     display: flex;
     justify-content: center;
     margin-top: 15px;
+  }
+
+  #cftf-dpdown-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .cftf-dpdown-box {
+    width: 50%;
+    margin-top: 5px;
+  }
+  .cft-dpdown-inner-container{
+    //display: flex;
+  }
+  .cft-selection-box  {
+    width: 60%;
+      margin-left: 4px;
+  }
+  @media(max-width: 300px) {
+    .cftf-dpdown-box {
+       width: 100%;
+     }
   }
 
 }

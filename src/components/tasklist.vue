@@ -4,11 +4,11 @@
   <b-row class="cft-service-task-list">
     <b-col cols="*" xl="4" lg="4" md="4" sm="12" v-if="tasks && tasks.length" class="cft-first">
     <b-list-group class="cft-list-container">
-    <div class="cft-filter-sort"> 
-      <div class="d-flex" v-for="(sort, idx) in sortList" :key="sort.sortBy">
-          <div>
+    <div id='cftf-dpdown-container'> 
+      <div class="cftf-dpdown-box" v-for="(sort, idx) in sortList" :key="sort.sortBy">
+          <div class="cft-dpdown-inner-container">
         <span v-if="sortList.length>1" class="font-weight-bold click-element" title="Remove Sorting" @click="deleteSort(sort, index)">x</span>
-        <select class="form-select" aria-label="Select Sorting Options" @change="updateSort($event, idx)">
+        <select class="cft-selection-box" aria-label="Select Sorting Options" @change="updateSort($event, idx)">
           <option v-for="s in sortOptions" :value="s.sortBy" :key="s.sortBy">{{s.label}}</option>
         </select>
         <a v-if="sort.sortOrder==='asc'" @click="toggleSort(idx)" href="#" title="Ascending">
