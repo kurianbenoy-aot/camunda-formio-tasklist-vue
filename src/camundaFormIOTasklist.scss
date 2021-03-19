@@ -166,7 +166,7 @@
     margin-top: 5px;
   }
   .cft-dpdown-inner-container{
-    //display: flex;
+    display: flex;
   }
   .cft-selection-box  {
     width: 60%;
@@ -177,6 +177,11 @@
        width: 100%;
      }
   }
+
+  .tab-content {
+    height:100%;
+  }
+  
 
 }
 
@@ -192,5 +197,3 @@
     text-align: left;
   }
 }
-
-
