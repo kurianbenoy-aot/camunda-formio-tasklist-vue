@@ -10,7 +10,7 @@
 
       <b-table-simple hover small caption-top responsive :bordered=true :outlined=true
       :per-page="perPage">
-        <b-thead>
+        <b-thead >
           <b-tr>
             <b-th>Form</b-th>
             <b-th>Operations</b-th>
@@ -20,10 +20,6 @@
           <b-tr v-for="form in formList" :key="form.formId">
             <b-th> {{form.formName}}</b-th>
             <b-th><b-button variant="primary"><i class="bi bi-pencil"></i> Submit New</b-button> </b-th>
-            {{form.formId}}
-            <Form src="https://forms2.aot-technologies.com/form/605292632f1358ca46309b2d"
-            >
-            </Form>
           </b-tr>
         </b-tbody>
       </b-table-simple>
