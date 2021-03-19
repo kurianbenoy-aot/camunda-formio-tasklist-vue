@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="cftf-form-conatiner">
     <h3 class="cftf-taskhead">Form</h3>
     <div class="overflow-auto">
 
@@ -9,8 +9,8 @@
       </b-table> -->
 
       <b-table-simple hover small caption-top responsive :bordered=true :outlined=true
-      :per-page="perPage">
-        <b-thead head-variant="dark">
+      :per-page="perPage" class="cftf-table-align">
+        <b-thead class="table-secondary">
           <b-tr>
             <b-th>Form</b-th>
             <b-th>Operations</b-th>
