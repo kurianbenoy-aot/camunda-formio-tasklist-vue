@@ -10,7 +10,7 @@
 
       <b-table-simple hover small caption-top responsive :bordered=true :outlined=true
       :per-page="perPage">
-        <b-thead >
+        <b-thead head-variant="dark">
           <b-tr>
             <b-th>Form</b-th>
             <b-th>Operations</b-th>
