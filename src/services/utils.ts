@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const getTaskFromList = (tasks: any[], taskId: string) =>{
   const task = tasks.find(task=>task.id===taskId);
   return task;
@@ -61,3 +63,18 @@ export const getFormattedDateAndTime = (date: Date)=>{
 export const getLocalDateTime = (date: any) => {
   return date?new Date(date.replace(' ','T')+'Z').toLocaleString(): "-";
 }
+
+export const getISODateTime=(date: Date)=>{
+  if(date){
+    const dateTimeFormat = moment(date).format("YYYY-MM-DD[T]hh:mm:ss.SSSZ");
+    const dateTimeArr = dateTimeFormat.split('+');
+    if(dateTimeArr && dateTimeArr[1]){
+      const replaceTimezone = dateTimeArr[1]?.replace(':', '');
+      return dateTimeFormat.replace(dateTimeArr[1], replaceTimezone);
+    }else{
+      return dateTimeFormat;
+    }
+  }else{
+    return null
+  }
+};
