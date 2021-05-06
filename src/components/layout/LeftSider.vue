@@ -48,10 +48,9 @@
             </div>
         </div>
         </b-list-group-item>
-
         <b-pagination
         v-model="currentPage"
-        :total-rows="Lentask"
+        :total-rows="getFormsFlowTaskLength"
         :per-page="perPage"
         class="cft-paginate"
         />
@@ -96,17 +95,20 @@ export default class LeftSider extends Vue {
   @serviceFlowModule.Getter('getFormsFlowTaskCurrentPage') private getFormsFlowTaskCurrentPage: any;
   @serviceFlowModule.Getter('getFormsFlowTaskId') private getFormsFlowTaskId: any;
   @serviceFlowModule.Getter('getFormsFlowactiveIndex') private getFormsFlowactiveIndex: any;
+  @serviceFlowModule.Getter('getFormsFlowTaskLength') public getFormsFlowTaskLength: any;
 
 
   @serviceFlowModule.Mutation('setFormsFlowTaskCurrentPage') public setFormsFlowTaskCurrentPage: any
   @serviceFlowModule.Mutation('setFormsFlowTaskId') public setFormsFlowTaskId: any
   @serviceFlowModule.Mutation('setFormsFlowactiveIndex') public setFormsFlowactiveIndex: any
+  @serviceFlowModule.Mutation('setFormsFlowTaskLength') public setFormsFlowTaskLength: any;
 
   private getProcessDefinitions: Array<object> = [];
   private processDefinitionId = '';
   private activeIndex = 0;
   private sList: any;
   private currentPage = 1;
+  private tasklength = 0;
 
 @Watch('currentPage')
   onPageChange(newVal: number) {
@@ -176,6 +178,9 @@ mounted() {
   this.$root.$on('update-activeIndex-pagination', (para: any) => {
     this.activeIndex = para.activeindex;
   })
+  this.tasklength = this.getFormsFlowTaskLength;
+  console.log(typeof(this.tasklength))
+  console.log(this.tasklength)
   if (this.getFormsFlowactiveIndex > 0) {
     this.activeIndex = this.getFormsFlowactiveIndex
   }

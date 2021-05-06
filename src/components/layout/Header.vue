@@ -78,9 +78,9 @@ import {
   sortingList,
 } from '../../services/utils';
 import FormListModal from '../FormListModal.vue';
-import { Getter, namespace } from 'vuex-class';
 import {Payload} from '../../services/TasklistTypes';
 import TaskSortOptions from '../TaskListSortoptions.vue';
+import { namespace } from 'vuex-class';
 
 const serviceFlowModule = namespace('serviceFlowModule')
 
@@ -102,7 +102,6 @@ export default class Header extends Vue {
   @serviceFlowModule.Getter('getFormsFlowTaskCurrentPage') private getFormsFlowTaskCurrentPage: any;
   @serviceFlowModule.Mutation('setFormsFlowTaskCurrentPage') public setFormsFlowTaskCurrentPage: any;
 
-  // @Getter('getFormsFlowTaskCurrentPage') private getFormsFlowTaskCurrentPage: any;
   private showfilter=false;
   private activefilter = 0;
   private sortList = TASK_FILTER_LIST_DEFAULT_PARAM;

@@ -14,7 +14,7 @@
           </b-nav-item-dropdown>
         </b-col>
         <b-col cols="2">
-          {{ tasklength }}
+          {{ getFormsFlowTaskLength }}
         </b-col>
       </b-row>
       <span v-if="isVariableTypeInSelectedSearchQuery">
@@ -37,6 +37,9 @@
 <script lang="ts">
 import '../../styles/camundaFormIOTasklistSearch.scss'
 import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
+import { namespace } from 'vuex-class';
+
+const serviceFlowModule = namespace('serviceFlowModule')
 
 @Component
 export default class TaskListAddSearchIgnoreCase extends Vue {
@@ -45,6 +48,8 @@ export default class TaskListAddSearchIgnoreCase extends Vue {
     @Prop() private queryType !: string;
     @Prop() private tasklength !: number;
     @Prop() private searchListElements !: any;
+
+    @serviceFlowModule.Getter('getFormsFlowTaskLength') private getFormsFlowTaskLength: any;
 
     private variablesEndType = [];
     private QList = this.queryList;
