@@ -346,14 +346,21 @@ export default class TaskListSearch extends Vue {
 
   mounted() {
     this.updateTasklistResult();
-    this.$root.$on('call-updateTaskList', (para: any) => {
+    
+    this.$root.$on('call-updateSearchQueryType', (para: any) => {
       this.queryType = para.queryType;
+      console.log(this.queryList);
+      this.updateTasklistResult();
+    })
+
+    this.$root.$on('call-updateTaskList', (para: any) => {
       this.queryList = para.queryList;
       this.updateTasklistResult();
     })
   }
 
   beforeDestroy() {
+    this.$root.$off('call-updateSearchQueryType');
     this.$root.$off('call-updateTaskList');
   }
 }

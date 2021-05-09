@@ -65,9 +65,9 @@ export default class TaskListAddSearchIgnoreCase extends Vue {
       this.QList['variableValuesIgnoreCase'] = false;
       for(const variablevalue in this.variablesEndType) {
         this.QList[this.variablesEndType[variablevalue]] = true;
-        this.$root.$emit('call-updateTaskList', {queryType: this.queryType, queryList: this.QList})
+        this.$root.$emit('call-updateTaskList', {queryList: this.QList})
       }
-      this.$root.$emit('call-updateTaskList', {queryType: this.queryType, queryList: this.QList});
+      this.$root.$emit('call-updateTaskList', {queryList: this.QList});
     }
 
 }
