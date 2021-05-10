@@ -10,19 +10,28 @@
 
       <div v-if="selectedSearchQueries.length">
         <TaskListSearchType/>
+        {{selectedSearchQueries}}
         <div
           class="cftf-search-item-box mr-2"
           v-for="(query, index) in selectedSearchQueries"
           :key="query.label + index"
         >
-          <span @click="deleteSearchQueryElement(query,index)">
-            <i class="fa fa-times cftf-x"></i>
-          </span>
-          <span class="cftf-search-title" title="type">
-            <!-- <v-select :options="searchLabels" v-model="query.label"/> -->
-            <span @click="showUpdateSearchQueryList(index)">
-              {{query.label}}
-            </span>
+          <b-row>
+            <b-col cols="1">
+              <i class="fa fa-times cftf-x" @click="deleteSearchQueryElement(query,index)"></i>
+            </b-col>
+            <b-col cols="5" sm="5">
+              <b-nav-item-dropdown :text=query.label title="type">
+                <b-dropdown-item-button
+                  v-for="updateSearch in searchListElements"
+                  :key="updateSearch.label"
+                  href="#"
+                  @click="updateSearchQueryElement(updateSearch, index)"
+                >
+                  {{updateSearch.label}}
+                </b-dropdown-item-button>
+              </b-nav-item-dropdown>
+            </b-col>
             <span v-if="query.type === 'variables'"> 
               <span>: </span>     
               <span
@@ -56,30 +65,21 @@
               >
                 {{ searchVariableValue[index] }}
               </span>
-            </span>
-          <div v-if="showUpdatesearch[index]" class="cftf-sort-items">
-            <div
-              v-for="updateSearch in searchListElements"
-              :key="updateSearch.key"
-              @click="updateSearchQueryElement(updateSearch, index)"
-              class="mb-2 cft-sort-element"
-            >
-              {{ updateSearch.label }}
-            </div>
-          </div>
-          <div>
-            <p
-              class="cft-search-operator"
-              title="operator"
-              @click="toggleSearchQueryOperatorList(index)"
-            >
-              {{ operator[index] }}
-            </p>
-            <div class="cft-operator-dropdown" v-if="showSearchQueryOperators[index]">
-              <div v-for="x in query.compares" :key="x">
-                <span @click="updateSearchQueryOperators(x, index)">{{ x }}</span>
-              </div>
-            </div>
+          </b-row>
+          <b-row>
+            <b-col cols="2">
+              <b-nav-item-dropdown :text="query.operator">
+                <b-dropdown-item-button
+                v-for="x in query.compares"
+                :key="x"
+                href="#"
+                @click="updateSearchQueryOperators(x, index)"
+                v-model="query.operator"
+                >
+                {{x}}
+                </b-dropdown-item-button>
+              </b-nav-item-dropdown>
+            </b-col>
             <div class="cft-rhs-container">
               <span
                 v-if="showSearchs[index] === 'a'"
@@ -93,7 +93,7 @@
                 size="sm"
                 v-model="setDate[index]"
                 @input="
-                  setSearchQueryValue(setDate[index], query, operator[index], index); 
+                  setSearchQueryValue(setDate[index], query, index); 
                   showsearchValueItem(index); 
                 "
                 >
@@ -105,7 +105,7 @@
               <span v-if="showSearchs[index] === 'i' && query.type !=='date'">
               <span class="cft-icon-actions">
                 <span @click="
-                    setSearchQueryValue(searchValueItem[index], query, operator[index], index);
+                    setSearchQueryValue(searchValueItem[index], query, index);
                     showsearchValueItem(index);
                   "
                 >
@@ -116,7 +116,7 @@
               <b-form-input
                 v-model="searchValueItem[index]"
                 v-on:keyup.enter="
-                  setSearchQueryValue(searchValueItem[index], query, operator[index], index);
+                  setSearchQueryValue(searchValueItem[index], query, index);
                   showsearchValueItem(index);
                 "
               />
@@ -128,12 +128,11 @@
                 {{ query.name }}
               </span>
             </div>
-          </div>
+          </b-row>
         </div>
       </div>
       <TaskListAddSearchIgnoreCase
         :queryList="queryList"
-        :queryType="queryType"
         :tasklength="tasklength"
         :isVariableTypeInSelectedSearchQuery="isVariableTypeInSelectedSearchQuery"
         :searchListElements="searchListElements"
@@ -172,12 +171,10 @@ export default class TaskListSearch extends Vue {
   // private searchLabels: any = (Object.values(taskSearchFilters).map((values: any) => values.label));
   private queryType = "ALL";
   private selectedSearchQueries: any = [];
-  private showUpdatesearch: Array<boolean> = [];
   private setUpdatesearchindex = 0;
-  private showSearchQueryOperators: any = [];
   private searchValueItem: any = [];
   private searchVariableValue: any = [];
-  private operator: Array<string> = [];
+  // private operator: Array<string> = [];
   private showSearchs: Array<string> = []; //3 states - a, i, s
   private showVariableValue: Array<string> = [];
   private queryList: any = {
@@ -187,18 +184,6 @@ export default class TaskListSearch extends Vue {
   private isVariableTypeInSelectedSearchQuery = false;
   private setDate: Array<string> = [];
 
-  toggleSearchQueryOperatorList(index: number) {
-    Vue.set(this.showSearchQueryOperators, index, !this.showSearchQueryOperators[index]);
-  }
-
-  updateSearchQueryOperators(operator: any, index: number) {
-    delete this.queryList[
-      searchValueObject(this.selectedSearchQueries[index].key, this.operator[index])
-    ];
-    this.operator[index] = operator;
-    Vue.set(this.showSearchQueryOperators, index, false);
-    this.setSearchQueryValue(this.searchValueItem[index], this.selectedSearchQueries[index], this.operator[index], index);
-  }
 
   updatesearchinput(index: number) {
     this.searchValueItem[index] = '';
@@ -229,20 +214,16 @@ export default class TaskListSearch extends Vue {
   addToSelectedSearchQuery(item: any) {
     this.selectedSearchQueries.push(item);
     if (this.selectedSearchQueries === []) {
-      this.operator[0] = item["compares"][0];
+      this.selectedSearchQueries[0]["operator"] = item["compares"][0]
       this.showSearchs[0] = "a";
-      this.showUpdatesearch[0] = false;
-      this.showSearchQueryOperators[0] = false;
       this.showVariableValue[0] = "a";
       if(item.type==="variables"){
         this.isVariableTypeInSelectedSearchQuery = true;
       }
     } 
     else {
-      this.operator[this.selectedSearchQueries.length - 1] = item["compares"][0];
+      this.selectedSearchQueries[this.selectedSearchQueries.length - 1]["operator"] = item["compares"][0]
       this.showSearchs[this.selectedSearchQueries.length - 1] = "a";
-      this.showUpdatesearch[this.selectedSearchQueries.length - 1] = false;
-      this.showSearchQueryOperators[this.selectedSearchQueries.length - 1] = false;
       this.showVariableValue[this.selectedSearchQueries.length - 1] = "a";
       if(item.type==="variables"){
         this.isVariableTypeInSelectedSearchQuery = true;
@@ -256,11 +237,10 @@ export default class TaskListSearch extends Vue {
     }
     else {
       delete this.queryList[
-        searchValueObject(this.selectedSearchQueries[index].key, this.operator[index])
+        searchValueObject(this.selectedSearchQueries[index].key, this.selectedSearchQueries[index].operator)
       ];
     }
     this.selectedSearchQueries.splice(index, 1);
-    this.operator.splice(index, 1);
 
     this.isVariableTypeInSelectedSearchQuery = false;
     for (const idx in this.selectedSearchQueries) {
@@ -271,35 +251,74 @@ export default class TaskListSearch extends Vue {
     this.updateTasklistResult()
   }
 
-  showUpdateSearchQueryList(index: number) {
-    for (let i = 0; i < 12; i++) {
-      this.showUpdatesearch[i] = false;
-    }
-    Vue.set(this.showUpdatesearch, index, !this.showUpdatesearch[index]);
-  }
-
   updateSearchQueryElement(searchitem: any, index: number) {
+    searchitem.name = this.selectedSearchQueries[index].name;
     if(this.selectedSearchQueries[index].type==='variables'){
-      console.log("update item", searchitem)
-      console.log(this.selectedSearchQueries[index]["key"])
-      console.log(this.selectedSearchQueries)
-      this.queryList = getDeletedVariableIndex(this.selectedSearchQueries[index] , this.selectedSearchQueries, this.selectedSearchQueries[index]["key"], this.queryList);
-      console.log(this.queryList)
+      searchitem["variable"] = this.selectedSearchQueries[index].variable;
+      this.queryList = getDeletedVariableIndex(
+        this.selectedSearchQueries[index],
+        this.selectedSearchQueries,
+        this.selectedSearchQueries[index]["key"],
+        this.queryList)
+      ;
     }
     else {
       delete this.queryList[
-        searchValueObject(this.selectedSearchQueries[index].key, this.operator[index])
+        searchValueObject(this.selectedSearchQueries[index].key, this.selectedSearchQueries[index].operator)
       ];
     }
     Vue.set(this.selectedSearchQueries, index, searchitem);
-    this.operator[index] = this.selectedSearchQueries[index].compares[0];
-    this.showUpdatesearch[index] = false;
-    this.setSearchQueryValue(this.searchValueItem[index], this.selectedSearchQueries[index], this.operator[index], index);
+    this.selectedSearchQueries[index].operator = searchitem["compares"][0];
+    this.setSearchQueryValue(this.searchValueItem[index], this.selectedSearchQueries[index], index);
     this.searchListElements = taskSearchFilters;
   }
 
-  setSearchQueryValue(item: any, query: any, operator: string, idx: number) {
-    const Vindex = searchValueObject(this.selectedSearchQueries[idx].key, this.operator[idx]);
+  updateSearchQueryOperators(item: any, index: number) {
+    Vue.set(this.selectedSearchQueries[index].operator, index, item);
+    // this.selectedSearchQueries[index].operator = operator;
+    delete this.queryList[
+      searchValueObject(this.selectedSearchQueries[index].key, this.selectedSearchQueries[index].operator)
+    ];
+    console.log("update search query", this.selectedSearchQueries)
+    if(this.selectedSearchQueries[index].name !== '') {
+      this.setSearchQueryValue(this.selectedSearchQueries[index].name, this.selectedSearchQueries[index], index);
+    }
+    // this.operator[index] = operator;
+    // console.warn('entered operator update-> operator value->', operator)
+    // console.warn('value of selected search query', this.selectedSearchQueries[index])
+    // console.warn('date value in index->',index, this.searchValueItem[index])
+    // if(this.selectedSearchQueries[index].type==='date'){
+    //   this.setSearchQueryValue(this.setDate[index], this.selectedSearchQueries[index], this.operator[index], index);
+    // }
+    // else{
+    //   this.setSearchQueryValue(this.searchValueItem[index], this.selectedSearchQueries[index], this.operator[index], index);
+    // }
+  }
+
+  // updateSearchQueryOperators(operator: any, index: number) {
+  //   delete this.queryList[
+  //     searchValueObject(this.selectedSearchQueries[index].key, this.selectedSearchQueries[index].operator)
+  //   ];
+  //   this.selectedSearchQueries[index]["operator"] = operator;
+  //   // this.operator[index] = operator;
+  //   if(this.selectedSearchQueries[index].type==='date'){
+  //     this.setSearchQueryValue(
+  //       this.setDate[index],
+  //       this.selectedSearchQueries[index],
+  //       index
+  //     );
+  //   }
+  //   else{
+  //     this.setSearchQueryValue(
+  //       this.searchValueItem[index],
+  //       this.selectedSearchQueries[index],
+  //       index);
+  //   }
+  // }
+
+
+  setSearchQueryValue(item: any, query: any, idx: number) {
+    const Vindex = searchValueObject(this.selectedSearchQueries[idx].key, this.selectedSearchQueries[idx].operator);
     this.selectedSearchQueries[idx]["name"] = item;
     switch(query.type) {
     case FilterSearchTypes.VARIABLES: {
@@ -308,7 +327,7 @@ export default class TaskListSearch extends Vue {
       if(this.searchValueItem[idx] && this.searchVariableValue[idx]){
         this.queryList[query.key].push({
           "name": this.searchVariableValue[idx],
-          "operator": getVariableOperator(operator),
+          "operator": getVariableOperator(item.operator),
           "value": this.searchValueItem[idx]
         })
         this.updateTasklistResult();
@@ -322,7 +341,7 @@ export default class TaskListSearch extends Vue {
     }
     case FilterSearchTypes.STRING:
     case FilterSearchTypes.NORMAL:{
-      if (this.operator[idx] === "like") {
+      if (item.operator === "like") {
         this.queryList[Vindex] = "%" + item + "%";
       } else {
         this.queryList[Vindex] = item;
@@ -349,7 +368,6 @@ export default class TaskListSearch extends Vue {
     
     this.$root.$on('call-updateSearchQueryType', (para: any) => {
       this.queryType = para.queryType;
-      console.log(this.queryList);
       this.updateTasklistResult();
     })
 
