@@ -15,7 +15,7 @@
           :key="query.label + index"
         >
         <b-row>
-          <b-col cols="1" @click="deleteSearchQueryElement(query,index)">
+          <b-col cols="1">
             <i class="fa fa-times cftf-x" @click="deleteSearchQueryElement(query,index)"></i>
           </b-col>
           <b-col cols="5">
@@ -69,7 +69,7 @@
             v-for="x in query.compares"
             :key="x"
             @click="updateSearchQueryOperators(x, index)"
-            v-model="operator[index]">
+            >
             {{x}}
             </b-dropdown-item-button>
           </b-nav-item-dropdown>
@@ -236,10 +236,15 @@ export default class TaskListSearch extends Vue {
       }
     }
   }
-
+  
   deleteSearchQueryElement(query: any, index: number) {
     if(query.type==='variables'){
-      this.queryList = getDeletedVariableIndex(query, this.selectedSearchQueries, this.selectedSearchQueries[index]["key"], this.queryList);
+      this.queryList = getDeletedVariableIndex(
+        query,
+        this.selectedSearchQueries,
+        this.selectedSearchQueries[index]["key"], 
+        this.queryList
+      );
     }
     else {
       delete this.queryList[
@@ -260,7 +265,11 @@ export default class TaskListSearch extends Vue {
 
   updateSearchQueryElement(searchitem: any, index: number) {
     if(this.selectedSearchQueries[index].type==='variables'){
-      this.queryList = getDeletedVariableIndex(this.selectedSearchQueries[index] , this.selectedSearchQueries, this.selectedSearchQueries[index]["key"], this.queryList);
+      this.queryList = getDeletedVariableIndex(this.selectedSearchQueries[index] ,
+        this.selectedSearchQueries,
+        this.selectedSearchQueries[index]["key"],
+        this.queryList
+      );
     }
     else {
       delete this.queryList[
@@ -269,7 +278,6 @@ export default class TaskListSearch extends Vue {
     }
     Vue.set(this.selectedSearchQueries, index, searchitem);
     this.operator[index] = this.selectedSearchQueries[index].compares[0];
-    // this.showUpdatesearch[index] = false;
     this.setSearchQueryValue(this.searchValueItem[index], this.selectedSearchQueries[index], this.operator[index], index);
   }
 
