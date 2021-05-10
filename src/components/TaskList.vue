@@ -51,7 +51,9 @@
                 <DatePicker
                   type="datetime"
                   placeholder="Set Follow-up date"
-                  v-model="setFollowup[getFormsFlowTaskCurrentPage*perPage + getFormsFlowactiveIndex]"
+                  v-model="setFollowup[
+                  (getFormsFlowTaskCurrentPage-1)*perPage + getFormsFlowactiveIndex
+                  ]"
                   @change="updateFollowUpDate"
                 ></DatePicker>
               </b-col>
@@ -66,7 +68,9 @@
                 <DatePicker
                   type="datetime"
                   placeholder="Set Due Date"
-                  v-model="setDue[getFormsFlowTaskCurrentPage*perPage + getFormsFlowactiveIndex]"
+                  v-model="setDue[
+                  (getFormsFlowTaskCurrentPage-1)*perPage + getFormsFlowactiveIndex
+                  ]"
                   @change="updateDueDate"
                 ></DatePicker>
               </b-col>
@@ -631,74 +635,74 @@ getTaskProcessDiagramDetails(task: any) {
     });
   }
 
+  updateTaskDatedetails(taskId: string, task: any) {
+    CamundaRest.updateTasksByID(
+      this.token,
+      taskId,
+      this.bpmApiUrl,
+      task
+    )
+      .then(() => {
+        console.warn("Updated follow up date");
+        this.reloadCurrentTask();
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
+  }
+
   updateFollowUpDate() {
     const referenceobject = this.task;
-    referenceobject['followUp'] = getISODateTime(this.setFollowup[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex]);
-    if(this.setFollowup[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex] && referenceobject['followUp']){
-      CamundaRest.updateTasksByID(
-        this.token,
-        this.task.id,
-        this.bpmApiUrl,
-        referenceobject
-      )
-        .then(() => {
-          console.warn("Updated follow up date");
-          this.reloadCurrentTask();
-        })
-        .catch((error) => {
-          console.error("Error", error);
-        });
+    try{
+      referenceobject['followUp'] = getISODateTime(this.setFollowup[
+        (this.getFormsFlowTaskCurrentPage-1)*this.perPage + this.getFormsFlowactiveIndex
+      ]);
+      this.updateTaskDatedetails(this.task.id, referenceobject);
     }
-    else {
+    catch {
       console.warn("Follow date error");
     }
   }
 
   updateDueDate() {
     const referenceobject = this.task;
-    referenceobject['due'] = getISODateTime(this.setDue[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex]);
-    if(this.setDue[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex] && referenceobject['due']){
-      CamundaRest.updateTasksByID(
-        this.token,
-        this.task.id,
-        this.bpmApiUrl,
-        referenceobject
-      )
-        .then(() => {
-          this.reloadCurrentTask();
-        })
-        .catch((error) => {
-          console.error("Error", error);
-        });
+    try{
+      referenceobject['due'] = getISODateTime(this.setDue[
+        ((this.getFormsFlowTaskCurrentPage-1)*this.perPage) + this.getFormsFlowactiveIndex
+      ]);
+      this.updateTaskDatedetails(this.task.id, referenceobject);
+    }
+    catch {
+      console.warn("Due date error");
     }
   }
 
   removeDueDate() {
     const referenceobject = this.task;
-    this.setFollowup[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex] = null
-    referenceobject["due"] = null;
-    CamundaRest.updateTasksByID(
-      this.token,
-      this.task.id,
-      this.bpmApiUrl,
-      referenceobject
-    ).then(() => {
-      this.reloadCurrentTask();
-    })
+    try{
+      this.setDue[
+        (this.getFormsFlowTaskCurrentPage-1)*this.perPage + this.getFormsFlowactiveIndex
+      ] = null
+      referenceobject["due"] = null;
+      this.updateTaskDatedetails(this.task.id, referenceobject);
+    }
+    catch {
+      console.warn("Due date error");
+    }
   }
 
   removeFollowupDate() {
     const referenceobject = this.task;
-    referenceobject["followUp"] = null;
-    this.setDue[this.getFormsFlowTaskCurrentPage*this.perPage + this.getFormsFlowactiveIndex] = null;
-    CamundaRest.updateTasksByID(
-      this.token,
-      this.task.id,
-      this.bpmApiUrl,
-      referenceobject
-    ).then(() => {
-      this.reloadCurrentTask();
-    })
+    try{
+      referenceobject["followUp"] = null;
+      this.setFollowup[
+        (this.getFormsFlowTaskCurrentPage-1)*this.perPage + this.getFormsFlowactiveIndex
+      ] = null;
+      this.updateTaskDatedetails(this.task.id, referenceobject);
+    }
+    catch {
+      console.warn("Follow up date error")
+    }
   }
 
   fetchTaskData(taskId: string) {
@@ -762,7 +766,7 @@ getTaskProcessDiagramDetails(task: any) {
           this.fetchTaskList(this.selectedfilterId, this.payload);
         }
       }
-      if(this.getFormsFlowTaskId && refreshedTaskId===this.getFormsFlowTaskId){
+      if((this.getFormsFlowTaskId) && (refreshedTaskId===this.getFormsFlowTaskId)){
         this.fetchTaskData(this.getFormsFlowTaskId);
         this.reloadCurrentTask();
       } 
@@ -771,8 +775,8 @@ getTaskProcessDiagramDetails(task: any) {
     CamundaRest.getUsers(this.token, this.bpmApiUrl).then((response) => {
       this.autoUserList = response.data.map((e: { id: number }) => (e.id));
     });
-    // we used two variables - taskId2 and taskIdValue because the router value from gettaskId is always
-    // constant, so on calling the required task details for using other tasks we need to remove taskId2 details
+    // we used two variables - taskId2 and taskIdValue because the router value from gettaskId is always passed from router,
+    // so after calling the required task details from router to use other tasks in list we need to set taskId2 value as ''
     if((this.taskId2 !== this.taskIdValue)) {
       this.taskId2 = this.taskIdValue;
     }
@@ -781,7 +785,7 @@ getTaskProcessDiagramDetails(task: any) {
     }
   }
 
-  findPassedRouterIndex(taskId: string, tasks: any) {
+  findTaskIdDetailsFromURLrouter(taskId: string, tasks: any) {
     this.task = getTaskFromList(tasks, taskId);
     this.setFormsFlowTaskId(this.taskIdValue);
     const pos = tasks.map(function(e: any) {
@@ -796,8 +800,8 @@ getTaskProcessDiagramDetails(task: any) {
  
  
   updated() {
-    if((this.fulltasks.length)&& (this.taskId2 !== '')){
-      this.findPassedRouterIndex(this.taskId2, this.fulltasks);
+    if((this.fulltasks.length) && (this.taskId2 !== '')){
+      this.findTaskIdDetailsFromURLrouter(this.taskId2, this.fulltasks);
       this.getBPMTaskDetail(this.taskId2);
       this.getTaskFormIODetails(this.taskId2);
       this.getTaskHistoryDetails(this.taskId2);
