@@ -58,6 +58,9 @@
         font-weight: 400;
         color: #155cb5;
         cursor: pointer;
+        .nav-link {
+            padding: 0px;
+        }
     }
 
     .cftf-search-title {
@@ -113,7 +116,4 @@
         font-size: 16px;
     }
 
-    .nav-link {
-        padding: 0px;
-    }
 }
