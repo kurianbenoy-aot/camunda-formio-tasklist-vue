@@ -93,7 +93,7 @@
                 </b-form-datepicker>
               </span>
               <span v-if="showSearchs[index] === 's'&& query.type ==='date'" @click="updatesearchinput(index)">
-                {{ formatDate(query.name) }}
+                {{ formatDate(setDate[index]) }}
               </span>
               <span v-if="showSearchs[index] === 'i' && query.type !=='date'">
               <span class="cft-icon-actions">
@@ -118,7 +118,7 @@
                 v-if="showSearchs[index] === 's' && query.type !=='date'"
                 @click="updatesearchinput(index)"
               >
-                {{ query.name }}
+                {{ searchValueItem[index] }}
               </span>
             </div>
           </b-col>
@@ -162,7 +162,6 @@ export default class TaskListSearch extends Vue {
   private searchListElements: any = taskSearchFilters;
   private queryType = "ALL";
   private selectedSearchQueries: any = [];
-  private showSearchQueryOperators: any = [];
   private searchValueItem: any = [];
   private searchVariableValue: any = [];
   private operator: Array<string> = [];
@@ -237,10 +236,10 @@ export default class TaskListSearch extends Vue {
   }
   
   deleteSearchQueryElement(query: any, index: number) {
-    this.searchValueItem[index] = null;
-    this.setDate[index] = '';
+    this.searchValueItem.splice(index, 1);
+    this.setDate.splice(index, 1);
     if(query.type==='variables'){
-      this.searchVariableValue[index] = null;
+      this.searchVariableValue.splice(index, 1);
       this.queryList = getDeletedVariableIndex(
         query,
         this.selectedSearchQueries,
